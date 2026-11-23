@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Study Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation / Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <span class="logo-icon">📚</span>
+        <h1>Smart Study Planner</h1>
+      </div>
+      <p class="tagline">Organize your subjects, track your study hours, and prepare for exams with confidence!</p>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
+
+    <!-- Dashboard Summary Cards -->
+    <section class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📖</div>
+        <div class="stat-info">
+          <h3 id="total-subjects">0</h3>
+          <p>Total Subjects</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <h3 id="pending-subjects">0</h3>
+          <p>Pending Subjects</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3 id="completed-subjects">0</h3>
+          <p>Completed Subjects</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-info">
+          <h3 id="total-hours">0 hrs</h3>
+          <p>Total Study Hours</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two Column Layout: Form on Left, Subject List on Right -->
+    <div class="app-layout">
+      
+      <!-- Left Column: Add Subject Form -->
+      <section class="card form-card">
+        <h2>➕ Add New Subject</h2>
+        <p class="form-desc">Enter your subject details to generate your personalized study plan.</p>
+
+        <form id="subject-form">
+          <!-- Subject Name -->
+          <div class="form-group">
+            <label for="subject-name">Subject Name</label>
+            <input 
+              type="text" 
+              id="subject-name" 
+              placeholder="e.g., Data Structures, Physics" 
+              required
+            >
+          </div>
+
+          <!-- Exam Date -->
+          <div class="form-group">
+            <label for="exam-date">Exam Date</label>
+            <input 
+              type="date" 
+              id="exam-date" 
+              required
+            >
+          </div>
+
+          <!-- Difficulty Level -->
+          <div class="form-group">
+            <label for="difficulty">Difficulty Level</label>
+            <select id="difficulty" required>
+              <option value="" disabled selected>Select difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <!-- Estimated Study Hours -->
+          <div class="form-group">
+            <label for="study-hours">Estimated Study Hours</label>
+            <input 
+              type="number" 
+              id="study-hours" 
+              placeholder="e.g., 12" 
+              min="1" 
+              required
+            >
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary">Add to Study Plan</button>
+        </form>
+      </section>
+
+      <!-- Right Column: Study Plan List -->
+      <section class="card plan-card">
+        <div class="plan-header">
+          <h2>📋 Your Study Plan</h2>
+          <span class="plan-subtitle">Cards are automatically prioritized based on urgency and difficulty</span>
+        </div>
+
+        <!-- Container where JavaScript dynamically injects subject cards -->
+        <div id="subject-list" class="subject-list">
+          <!-- Dynamic cards appear here -->
+        </div>
+
+        <!-- Empty state message if no subjects exist -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <p>No subjects added yet!</p>
+          <small>Fill out the form on the left to start planning your studies.</small>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Smart Study Planner &bull; Beginner College Mini-Project</p>
+  </footer>
+
+  <!-- JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
