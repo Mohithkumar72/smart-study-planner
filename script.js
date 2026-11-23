@@ -94,50 +94,96 @@ function formatDaysRemaining(days) {
 
 /**
  * PRIORITY CALCULATION LOGIC:
- * Calculates subject priority ("High", "Medium", "Low") based on:
+ * Calculates a numerical priority score based on:
  * 1. Days remaining until exam (urgency)
  * 2. Difficulty level (Easy, Medium, Hard)
  * 3. Estimated study hours required
  */
-function calculatePriority(daysRemaining, difficulty, studyHours) {
+function getPriorityScore(daysRemaining, difficulty, studyHours) {
   let score = 0;
 
-  // 1. Urgency based on exam date
+  // 1. Urgency based on exam date (nearer exam = higher priority)
   if (daysRemaining <= 3) {
-    score += 3; // Very urgent (3 days or less)
+    score += 5; // Very urgent (3 days or less)
   } else if (daysRemaining <= 7) {
-    score += 2; // Moderate urgency (within a week)
+    score += 3; // Moderately urgent (within a week)
+  } else if (daysRemaining <= 14) {
+    score += 2; // Within two weeks
   } else {
     score += 1; // Plenty of time
   }
 
-  // 2. Difficulty weight
+  // 2. Difficulty weight (harder subject = higher priority)
   if (difficulty === "Hard") {
-    score += 3;
+    score += 4;
   } else if (difficulty === "Medium") {
     score += 2;
   } else {
-    // Easy
-    score += 1;
+    score += 1; // Easy
   }
 
-  // 3. Study hours weight
+  // 3. Study hours weight (more hours = higher priority)
   if (studyHours >= 10) {
-    score += 2; // High study effort
+    score += 3; // High effort required
   } else if (studyHours >= 5) {
-    score += 1; // Moderate study effort
+    score += 2; // Moderate effort
   } else {
-    score += 0;
+    score += 1; // Low effort
   }
 
-  // Determine final priority level using conditional check
-  if (score >= 6) {
+  return score;
+}
+
+/**
+ * Returns the priority badge text ("High", "Medium", "Low")
+ */
+function calculatePriority(daysRemaining, difficulty, studyHours) {
+  const score = getPriorityScore(daysRemaining, difficulty, studyHours);
+
+  // Determine final priority label using conditional check
+  if (score >= 9) {
     return "High";
-  } else if (score >= 4) {
+  } else if (score >= 6) {
     return "Medium";
   } else {
     return "Low";
   }
+}
+
+/**
+ * PRIORITY SORTING LOGIC:
+ * Sorts subjects from highest priority to lowest priority:
+ * 1. Pending (active) subjects appear before completed subjects
+ * 2. Higher priority score appears first
+ * 3. Nearer exam date appears first (fewer days remaining)
+ * 4. More study hours appear first
+ */
+function sortSubjects(subjectsList) {
+  return subjectsList.slice().sort(function (a, b) {
+    // 1. Move completed subjects to the bottom
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
+
+    const daysA = calculateDaysRemaining(a.examDate);
+    const daysB = calculateDaysRemaining(b.examDate);
+
+    const scoreA = getPriorityScore(daysA, a.difficulty, a.hours);
+    const scoreB = getPriorityScore(daysB, b.difficulty, b.hours);
+
+    // 2. Higher priority score first
+    if (scoreB !== scoreA) {
+      return scoreB - scoreA;
+    }
+
+    // 3. Tie-breaker: Nearer exam date first
+    if (daysA !== daysB) {
+      return daysA - daysB;
+    }
+
+    // 4. Tie-breaker: More study hours first
+    return b.hours - a.hours;
+  });
 }
 
 // -----------------------------------------------------------
@@ -182,8 +228,11 @@ function renderSubjects() {
 
   emptyState.style.display = "none";
 
-  // Loop over each subject and build its card
-  subjects.forEach(function (subject) {
+  // Automatically sort subjects from highest priority to lowest priority
+  const sortedSubjects = sortSubjects(subjects);
+
+  // Loop over each sorted subject and build its card
+  sortedSubjects.forEach(function (subject) {
     const daysLeft = calculateDaysRemaining(subject.examDate);
     const priority = calculatePriority(daysLeft, subject.difficulty, subject.hours);
     const isCompleted = subject.completed;
